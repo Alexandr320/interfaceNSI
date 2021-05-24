@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <meta charset="UTF-8">
+        <script src="https://code.jquery.com/jquery-3.2.1.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.js"></script>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.css">
+        <link rel="stylesheet" th:href="@{/css/style.css}" type="text/css"/>
+        <link rel="icon" type="image/png" th:href="@{/img/icon.png}"/>
+        <title th:text="#{main_admin.title}">Выбор категории НСИ (администратор)</title>
+    </head>
+
+    <body>
+        <div style="margin-left: 95%; margin-top: 1%"><a href="?lang=ru">RU</a>&nbsp;<a href="?lang=en">EN</a></div>
+        <h3 th:text="#{main_admin.title}">Выбор категории НСИ (администратор)</h3><br>
+
+        <div style="margin-left: 94%;"><a href="logout" class="btn btn-primary" th:text="#{logout}">Выйти</a></div>
+
+        <div class="block1">
+            <div class="flex-item">
+                <p th:text="#{main_admin.link.guide_table_admin}">Создание (выбор) и редактирование табличных справочников</p>
+                <div><a th:href="@{/guide_table_admin}" class="btn btn-primary" th:text="#{proceed}">Перейти</a></div>
+            </div>
+
+        </div>
+
+    </body>
+</html>

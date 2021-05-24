@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <meta charset="UTF-8">
+        <script src="https://code.jquery.com/jquery-3.2.1.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.js"></script>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.css">
+        <link rel="stylesheet" th:href="@{/css/style.css}" type="text/css"/>
+        <link rel="icon" type="image/png" th:href="@{/img/icon.png}"/>
+        <title th:text="#{guide_table_create_complete_admin.title}">Создание табличного справочника</title>
+    </head>
+    <script language="JavaScript">
+            var $firstRow;
+            function setIndex($row, newIndex) {
+                var newId = 'attrs' + newIndex;
+                var newName = 'attrs[' + newIndex + ']';
+                $row.find('.input-name').attr('id', newId + '.name').attr('name', newName + '.name');
+                $row.find('.input-code').attr('id', newId + '.code').attr('name', newName + '.code');
+                $row.find('.select-type').attr('id', newId + '.attrType').attr('name', newName + '.attrType');
+            }
+            function setAllIndexes() {
+                $('#table-attr tr.row-attr').each(function(index, jsRow) { setIndex($(jsRow), index); });
+            }
+            function onBtnDelClick(e) {
+                $(e.target).parents('.row-attr').remove();
+                setAllIndexes();
+            }
+            $(document).ready(function() {
+                $firstRow = $('#table-attr tr.row-attr').eq(0).clone();
+                $firstRow.find('input[id="attrs0.name"]').val('');
+                $firstRow.find('input[id="attrs0.code"]').val('');
+                $firstRow.find('input[id="attrs0.attrType"]').val('');
+                $('#btn-add').on('click', function() {
+                    var $rowCopy = $firstRow.clone();
+                    var newIndex = $('#table-attr tr.row-attr').length;
+                    setIndex($rowCopy, newIndex);
+                    $rowCopy.insertBefore("#row-btn-add");
+                    $rowCopy.find('.btn-del').on('click', onBtnDelClick);
+                });
+                $('.btn-del').on('click', onBtnDelClick);
+            });
+        </script>
+
+    <body>
+        <div style="margin-left: 95%; margin-top: 1%"><a href="?lang=ru">RU</a>&nbsp;<a href="?lang=en">EN</a></div>
+        <h3 class="justify-content-center align-items-center" th:text="#{guide_table_create_complete_admin.title}">Создание табличного справочника</h3>
+
+        <div class="float-right mt-3 mr-4"><a th:href="@{/guide_table_admin}" class="btn btn-primary"
+                                              th:text="#{back}">Назад</a></div>
+
+        <div class="float-right mt-3 mr-4"><a th:href="@{/admin}" class="btn btn-primary"
+                                              th:text="#{to_main}">На главную</a></div><br><br>
+
+        <div class="col-md-2"></div>
+        <form th:action="@{/guide_table_create_complete_admin}" method="post" th:object="${dictionaryModel}"
+              class="col-md-8">
+            <table id="table-attr">
+                <tr>
+                    <td colspan="4" th:text="#{guide_table_create_complete_admin.add_attribute}">Добавьте атрибут:</td>
+                </tr>
+                <tr th:each="attr, attrStat : *{attrs}" class="d-flex row-attr justify-content-center align-items-center">
+                    <td class="col-5">
+                        <input class="form-control input-name" type="text"
+                               th:placeholder="#{guide_table_create_complete_admin.name}"
+                               th:field="*{attrs[__${attrStat.index}__].name}" />
+                    </td>
+                    <td class="col-3">
+                        <input class="form-control input-code" type="text"
+                               th:placeholder="#{guide_table_create_complete_admin.code}"
+                               th:field="*{attrs[__${attrStat.index}__].code}" />
+                    </td>
+                    <td class="col-3">
+                        <select class="form-control select-type" th:field="*{attrs[__${attrStat.index}__].attrType}">
+                            <option th:each="attrType : ${T(nii.ps.interfaceNSI.model.enums.AttrType).values()}"
+                                    th:value="${attrType}"
+                                    th:text="#{enum.AttrType.__${attrType}__}"
+                            ></option>
+                        </select>
+                    </td>
+                    <td><a class="btn btn-danger btn-del" th:text="#{btn.delete}">Удалить</a></td>
+                </tr>
+                <tr id="row-btn-add">
+                    <td colspan="4"><a class="btn btn-success" id="btn-add" th:text="#{btn.add}">Добавить</a></td>
+                </tr>
+                <tr>
+                    <td colspan="4">
+                        <input class="form-control" type="text"
+                               th:placeholder="#{guide_table_create_complete_admin.guide_name}"
+                               th:field="*{name}" />
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="4">
+                        <input class="form-control" type="text"
+                                  th:placeholder="#{guide_table_create_complete_admin.guide_description}"
+                                  th:field="*{description}" />
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="4"><input type="submit" th:value="#{btn.create.guide}" class="btn btn-primary" /></td>
+                </tr>
+            </table>
+        </form>
+
+    </body>
+</html>

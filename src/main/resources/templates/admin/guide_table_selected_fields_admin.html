@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <meta charset="UTF-8">
+        <script src="https://code.jquery.com/jquery-3.2.1.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.js"></script>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.css">
+        <script language="JavaScript">
+            $(document).ready(function() {
+                $('#file1').val(null);
+                $('#file1').on('change', function(e) {
+                    $(e.target).parents('form').submit();
+                });
+            });
+        </script>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.css">
+        <link rel="stylesheet" th:href="@{/css/style.css}" type="text/css"/>
+        <link rel="icon" type="image/png" th:href="@{/img/icon.png}"/>
+        <title th:text="#{guide_table_selected_fields.title}">Поля выбранного справочника</title>
+    </head>
+
+    <body th:with="paramNumber=${#request.getParameter('number')} ? ${#request.getParameter('number')} : ''">
+
+        <div style="margin-left: 95%; margin-top: 1%"><a href="?lang=ru">RU</a>&nbsp;<a href="?lang=en">EN</a></div>
+        <h3 th:text="#{guide_table_selected_fields.title}">Поля выбранного справочника</h3>
+
+        <div class="float-right mt-3 mr-4"><a th:href="@{'/guide_table_selected_fields_admin_csv?number=__${paramNumber}__'}"
+                                              class="btn btn-primary" target="_blank" th:text="#{to_csv}">В csv</a></div>
+
+        <div class="float-right mt-3 mr-4"><a th:href="@{'/guide_table_selected_fields_admin_xls?number=__${paramNumber}__'}"
+                            class="btn btn-primary" target="_blank" th:text="#{to_excel}">В Excel</a></div>
+
+        <div class="float-right mt-3 mr-4"><a th:href="@{/guide_table_admin}" class="btn btn-primary"
+                                              th:text="#{back}">Назад</a></div>
+
+        <div class="float-right mt-3 mr-4"><a th:href="@{/admin}" class="btn btn-primary"
+                                              th:text="#{to_main}">На главную</a></div>
+
+        <div class="float-right mt-3 mr-4">
+            <a th:href="@{'/guide_table_row_add_admin/__${paramNumber}__'}"
+               class="btn btn-primary"
+               th:text="#{btn.add}"
+               th:classappend="${paramNumber == ''}?disabled"
+            >Добавить</a>
+        </div>
+
+        <form th:action="@{'/guide_table_selected_fields_admin_upload_xls?number=__${paramNumber}__'}"
+              th:method="post" enctype="multipart/form-data" class="float-right col-md-1 mt-3 mr-2">
+                <input type="file" name="file" class="custom-file-input d-none" id="file1" aria-describedby="inputGroupFileAddon01"
+                        th:attr="disabled=${paramNumber == '' ? 'disabled' : null}">
+                <label class="btn btn-primary " for="file1" th:classappend="${paramNumber == ''}?disabled"
+                        title="load files: .csv, .xls, .xlsx" th:text="#{btn.upload}">Загрузить</label>
+        </form>
+
+        <br/>
+
+        <form class="col-md-3 mt-5 mb-4" th:action="@{/guide_table_selected_fields_admin}" method="get">
+            <label class="mb-3" th:text="#{guide_name}">Выберите название справочника</label>
+            <br/>
+            <select class="form-control float-left col-md-8" name="number">
+                <option></option>
+                <option th:each="guide : ${guideList}"
+                        th:value="${guide.id}"
+                        th:text="${guide.name}"
+                        th:attr="selected=${paramNumber == ('' + guide.id) ? 'selected' : null}"
+                ></option>
+            </select>
+            <input class="form-control col-md-3 btn btn-primary" type="submit" th:value="#{btn.enter}" />
+        </form>
+
+        <table  class="table table-inverse">
+            <thead>
+            <tr>
+                <td th:each="colName : ${tableModel.columnNames}" th:text="${colName}"></td>
+            </tr>
+            </thead>
+
+            <tbody>
+                <tr th:each="row : ${tableModel.rows}">
+                    <td th:each="cell : ${row}">
+                        <a th:if="${cell != null && cell.class.simpleName == 'ButtonModel'}"
+                           th:href="@{${cell.href}}" th:text="#{${cell.text}}"
+                           th:class="'btn btn-' + ${cell.colorType.name().toLowerCase()}"
+                        ></a>
+                        <th:block th:unless="${cell != null && cell.class.simpleName == 'ButtonModel'}" th:text="${cell}"></th:block>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+    </body>
+</html>

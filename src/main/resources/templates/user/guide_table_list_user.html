@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <meta charset="UTF-8">
+        <script src="https://code.jquery.com/jquery-3.2.1.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.js"></script>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.css">
+        <link rel="stylesheet" th:href="@{/css/style.css}" type="text/css"/>
+        <link rel="icon" type="image/png" th:href="@{/img/icon.png}"/>
+        <title th:text="#{guide_table_list.title}">Список табличных справочников</title>
+    </head>
+
+    <body>
+        <div style="margin-left: 95%; margin-top: 1%"><a href="?lang=ru">RU</a>&nbsp;<a href="?lang=en">EN</a></div>
+        <h3 th:text="#{guide_table_list.title}">Список табличных справочников</h3>
+
+        <div class="float-right mt-3 mr-4"><a th:href="@{/guide_table_list_user_csv}" class="btn btn-primary" target="_blank"
+                                              th:text="#{to_csv}">В .csv</a></div>
+
+        <div class="float-right mt-3 mr-4"><a th:href="@{/guide_table_list_user_xls}" class="btn btn-primary" target="_blank"
+                                              th:text="#{to_excel}">В Excel</a></div>
+
+        <div class="float-right mt-3 mr-4"><a th:href="@{/guide_table_user}" class="btn btn-primary"
+                                              th:text="#{back}">Назад</a></div>
+
+        <div class="float-right mt-3 mr-4"><a th:href="@{/user}" class="btn btn-primary"
+                                              th:text="#{to_main}">На главную</a></div>
+
+        <br/>
+        <br/>
+        <table  class="table table-inverse mt-5">
+            <thead>
+            <tr>
+                <td th:each="colName : ${tableModel.columnNames}" th:text="${colName}"></td>
+            </tr>
+            </thead>
+
+            <tbody>
+            <tr th:each="row : ${tableModel.rows}">
+                <td th:each="cell : ${row}">
+                    <a th:if="${cell != null && cell.class.simpleName == 'ButtonModel'}"
+                       th:href="@{${cell.href}}" th:text="#{${cell.text}}"
+                       th:class="'btn btn-' + ${cell.colorType.name().toLowerCase()}"
+                    ></a>
+                    <th:block th:unless="${cell != null && cell.class.simpleName == 'ButtonModel'}" th:text="${cell}"></th:block>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+
+    </body>
+</html>

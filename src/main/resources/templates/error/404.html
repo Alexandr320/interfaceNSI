@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <meta charset="UTF-8">
+        <title th:text="#{not_found_title}">Object not found</title>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.js"></script>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.css">
+        <link rel="stylesheet" th:href="@{/css/style.css}" type="text/css"/>
+        <link rel="icon" type="image/png" th:href="@{/img/icon.png}"/>
+    </head>
+    <body>
+    <span class="float-right mt-3 mr-5"><a href="?lang=ru">RU</a>&nbsp;<a href="?lang=en">EN</a></span>
+        <h3 th:text="#{not_found_title}">Object not found</h3>
+
+    <th:block sec:authorize="hasAuthority('ADMIN')">
+    <span class="float-right mt-3 mr-4"><a th:href="@{/admin}" class="btn btn-primary" th:text="#{to_main}">На главную</a></span><br><br>
+    </th:block>
+
+    <th:block sec:authorize="!hasAuthority('ADMIN')">
+    <span class="float-right mt-3 mr-4"><a th:href="@{/user}" class="btn btn-primary" th:text="#{to_main}">На главную</a></span><br><br>
+    </th:block>
+    </body>
+</html>

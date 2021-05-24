@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <meta charset="UTF-8">
+        <script src="https://code.jquery.com/jquery-3.2.1.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.js"></script>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.css">
+        <link rel="stylesheet" th:href="@{/css/style.css}" type="text/css"/>
+        <link rel="icon" type="image/png" th:href="@{/img/icon.png}"/>
+        <title th:text="#{guide_table_selected.title}">Атрибуты выбранного справочника</title>
+    </head>
+
+    <body th:with="paramNumber=${#request.getParameter('number')} ? ${#request.getParameter('number')} : ''">
+        <div style="margin-left: 95%; margin-top: 1%"><a href="?lang=ru">RU</a>&nbsp;<a href="?lang=en">EN</a></div>
+        <h3 th:text="#{guide_table_selected.title}">Атрибуты выбранного справочника</h3>
+
+        <div class="float-right mt-3 mr-4"><a th:href="@{'/guide_table_selected_user_csv?number=__${paramNumber}__'}"
+                            class="btn btn-primary" target="_blank" th:text="#{to_csv}">В .csv</a></div>
+
+        <div class="float-right mt-3 mr-4"><a th:href="@{'/guide_table_selected_user_xls?number=__${paramNumber}__'}"
+                            class="btn btn-primary" target="_blank" th:text="#{to_excel}">В Excel</a></div>
+
+        <div class="float-right mt-3 mr-4"><a th:href="@{/guide_table_user}" class="btn btn-primary"
+                                              th:text="#{back}">Назад</a></div>
+
+        <div class="float-right mt-3 mr-4"><a th:href="@{/user}" class="btn btn-primary"
+                                              th:text="#{to_main}">На главную</a></div>
+
+        <br/>
+        <form class="col-md-3 mt-5 mb-4" th:action="@{/guide_table_selected_user}" method="get">
+            <label class="mb-3" th:text="#{guide_name}">Выберите название справочника</label>
+            <br/>
+            <select class="form-control float-left col-md-8" name="number">
+                <option></option>
+                <option th:each="guide : ${guideList}"
+                        th:value="${guide.id}"
+                        th:text="${guide.name}"
+                        th:attr="selected=${paramNumber == ('' + guide.id) ? 'selected' : null}"
+                ></option>
+            </select>
+            <input class="form-control col-md-3 btn btn-primary" type="submit" th:value="#{btn.enter}" />
+        </form>
+
+        <table  class="table table-inverse">
+            <thead>
+            <tr>
+                <td th:each="colName : ${tableModel.columnNames}" th:text="${colName}"></td>
+            </tr>
+            </thead>
+
+            <tbody>
+            <tr th:each="row : ${tableModel.rows}">
+                <td th:each="cell : ${row}" th:text="${cell}"></td>
+            </tr>
+            </tbody>
+        </table>
+
+    </body>
+</html>

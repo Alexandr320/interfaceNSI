@@ -31,6 +31,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                     .permitAll()
                 .and()
 
+                .exceptionHandling()
+                    .accessDeniedPage("/error/404")
+                .and()
+
                 .authorizeRequests()
                     .mvcMatchers("/css/**", "/img/**", "/js/**", "/encode/*", "/login").permitAll()
                     .anyRequest().authenticated()
@@ -46,6 +50,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .withUser("admin").password("$2a$10$CNX4EjAQXwPAo6gCWRPE9eZcax7k5hHthyIk1SmDRN3bpB71n7Bou").authorities("ADMIN")
                 .and()
                 .withUser("user").password("$2a$10$I0LyKl3Zo9CMXGGfdyee6uHcAuhnlj/LI4hVREZT2KiXV80fOuECS").authorities("USER")
+                .and()
+                .withUser("user1").password("$2a$10$R63GO4OUEraszy2wY9WkOeCJ2OJ9V9iPWhS2kT49toZTczTHdpMTO").authorities("USER")
         ;
     }
 }

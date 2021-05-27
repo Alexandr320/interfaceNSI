@@ -13,11 +13,13 @@ import nii.ps.interfaceNSI.service.upload.UploadService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.thymeleaf.util.StringUtils;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -31,6 +33,8 @@ public class TableController {
     private static final String EXCEL_CONTENT_TYPE = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
     private static final String ATTACHMENT_FILENAME = "attachment;filename=";
 
+    @Autowired
+    private PasswordEncoder passwordEncoder;
     @Autowired
     private TableDao tableDao;
     @Autowired
@@ -173,6 +177,64 @@ public class TableController {
     @PreAuthorize("hasAuthority('ADMIN')")
     public String getMainAdmin() {
         return "admin/main_admin";
+    }
+
+    @GetMapping("/user_list_admin")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public String getUserListAdmin(Model model) {
+        TableModel tableModel = tableDao.getTableModelForSql("select username,enabled,authority from login_users order by username;");
+        tableModel.addButtonsUpdate(row -> "/user_update_admin/" + row.get(0));
+        tableModel.addButtonsDelete(row -> "/user_delete_admin/" + row.get(0));
+        model.addAttribute("tableModel", tableModel);
+        return "admin/user_list_admin";
+    }
+
+    // update user URL
+    @GetMapping("/user_update_admin/{username}")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public String getUserUpdateAdmin(Model model, @PathVariable String username) {
+        model.addAttribute("username", username);
+        model.addAttribute("authority", tableDao.getAuthorityByUsername(username));
+        return "admin/user_update_admin";
+    }
+    // update user URL
+    @PostMapping("/user_update_admin/{username}")
+    public String postUserUpdateAdmin(
+            @PathVariable String username,
+            @RequestParam String password,
+            @RequestParam String authority
+    ) {
+        if (StringUtils.isEmpty(password)) {
+            tableDao.updateAuthority(username, authority);
+        } else {
+            tableDao.updatePasswordAndAuthority(username, passwordEncoder.encode(password), authority);
+        }
+        return "redirect:/user_list_admin";
+    }
+
+    // insert user URL
+    @GetMapping("/user_add_admin")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public String getUserAddAdmin() {
+        return "admin/user_add_admin";
+    }
+    // insert user URL
+    @PostMapping("user_add_admin")
+    public String postUserAddAdmin(
+            @RequestParam String username,
+            @RequestParam String password,
+            @RequestParam String authority
+    ) {
+        tableDao.insertUser(username, passwordEncoder.encode(password), authority);
+        return "redirect:/user_list_admin";
+    }
+
+    // delete Row URL
+    @GetMapping("/user_delete_admin/{username}")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public String getUserDeleteAdmin(@PathVariable String username) {
+        tableDao.deleteUser(username);
+        return "redirect:/user_list_admin";
     }
 
     @GetMapping("/guide_table_admin")

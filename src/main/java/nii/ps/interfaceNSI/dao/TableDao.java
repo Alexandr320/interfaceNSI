@@ -146,6 +146,39 @@ public class TableDao {
         }
     }
 
+    public void deleteUser(String username) {
+        namedParameterJdbcTemplate.update("delete from login_users where username = :username;", Map.of("username", username));
+    }
+
+    public void updateAuthority(String username, String authority) {
+        namedParameterJdbcTemplate.update(
+                "UPDATE login_users SET authority = :authority WHERE username= :username;",
+                Map.of("username", username, "authority", authority)
+        );
+    }
+
+    public void updatePasswordAndAuthority(String username, String password, String authority) {
+        namedParameterJdbcTemplate.update(
+                "UPDATE login_users SET password = :password, authority = :authority WHERE username= :username;",
+                Map.of("username", username, "password", password, "authority", authority)
+        );
+    }
+
+    public void insertUser(String username, String password, String authority) {
+        namedParameterJdbcTemplate.update(
+                "insert into login_users (username, password, authority) values(:username, :password, :authority);",
+                Map.of("username", username, "password", password, "authority", authority)
+        );
+    }
+
+    public String getAuthorityByUsername(String username) {
+        return namedParameterJdbcTemplate.queryForObject(
+                "select authority from login_users where username = :username;",
+                Map.of("username", username),
+                String.class
+        );
+    }
+
     public void guideTableDeleteById(Integer id) {
         namedParameterJdbcTemplate.queryForObject("select ioDelete(:id, false);", Map.of("id", id), Integer.class);
     }

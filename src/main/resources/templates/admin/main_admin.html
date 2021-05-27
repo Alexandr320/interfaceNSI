@@ -12,10 +12,14 @@
 
     <body>
         <div style="margin-left: 95%; margin-top: 1%"><a href="?lang=ru">RU</a>&nbsp;<a href="?lang=en">EN</a></div>
-        <h3 th:text="#{main_admin.title}">Выбор категории НСИ (администратор)</h3><br>
+        <h3 th:text="#{main_admin.title}">Выбор категории НСИ (администратор)</h3>
 
-        <div style="margin-left: 94%;"><a href="logout" class="btn btn-primary" th:text="#{logout}">Выйти</a></div>
-
+        <div class="float-right mt-3 mr-4"><a href="logout" class="btn btn-primary" th:text="#{logout}">Выйти</a></div>
+        <div class="float-right mt-3 mr-4"><a th:href="@{/user_list_admin}" class="btn btn-primary"
+                                              th:text="#{main_admin.user_list}">Список юзеров</a></div>
+        <br/>
+        <br/>
+        <br/>
         <div class="block1">
             <div class="flex-item">
                 <p th:text="#{main_admin.link.guide_table_admin}">Создание (выбор) и редактирование табличных справочников</p>
